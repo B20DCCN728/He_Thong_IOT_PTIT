@@ -1,4 +1,88 @@
 <script setup>
+import { ref, onMounted, computed, watch } from 'vue';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import axios from 'axios';
+import { message } from 'ant-design-vue';
+
+// led
+const led = ref(false);
+
+// fan
+const fan = ref(false);
+
+const request = {
+    "message": "ON"
+}
+
+watch(led, async (newLed) => {
+    if(newLed === true) {
+        request.message = "ON";
+    } else {
+        request.message = "OFF";
+    }
+
+    try {
+        const response = await axios.post('http://localhost:8080/led-device', request);
+        console.log('Data fetched:', response.data); // Add this line
+        message.success(`Đã gửi yêu cầu điều khiển đèn: ${request.message}`);
+    } catch (error) {
+        console.log("Lỗi rồi!! ", error);
+        message.error('Gửi yêu cầu điều khiển đèn thất bại');
+    } 
+});
+
+watch(fan, async (newFan) => {
+    if(newFan === true) {
+        request.message = "ON";
+    } else {
+        request.message = "OFF";
+    }
+
+    try {
+        const response = await axios.post('http://localhost:8080/fan-device', request);
+        console.log('Data fetched:', response.data); // Add this line
+        message.success(`Đã gửi yêu cầu điều khiển quạt: ${request.message}`);
+    } catch (error) {
+        console.log("Lỗi rồi!! ", error);
+        message.error('Gửi yêu cầu điều khiển quạt thất bại');
+    } 
+});
+
+// Server data
+const serverData = ref(
+    {
+        "id": 251,
+        "timeStamp": "2023-11-08T22:59:41.2964305",
+        "temperature": 28.5,
+        "humidity": 85.0,
+        "lightValue": 1024.0,
+        "voltage": 3.3
+    }
+); 
+
+// Set up the WebSocket connection
+const socketUrl = "http://localhost:8080/ws"; 
+const socket = new SockJS(socketUrl);
+const stompClient = Stomp.over(socket);
+
+// Callback function to handle received data
+const onDataReceived = (message) => {
+  const data = JSON.parse(message.body);
+  serverData.value = data;
+  console.log('Received data:', data);
+};
+
+// Subscribe to a specific STOMP destination to get real-time data
+onMounted(() => {
+  console.log('Connecting to WebSocket...');
+  stompClient.connect({}, (frame) => {
+    console.log('Connected to WebSocket');
+    // Subscribe to a specific STOMP destination to get real-time data
+    const subscription = stompClient.subscribe('/sensor', onDataReceived);
+    // subscription.unsubscribe();
+  });
+});
 </script>
 
 <template>
@@ -8,7 +92,7 @@
       <div class="cards">
           <div class="card">
               <div class="card-content">
-                  <div id="temperature" class="number">35°C</div>
+                  <div id="temperature" class="number"> {{ serverData.temperature }}°C</div>
                   <div class="card-name">Nhiệt độ</div>
               </div>
               <div class="icon-box">
@@ -17,7 +101,7 @@
           </div>
           <div class="card">
               <div class="card-content">
-                  <div id="humidity" class="number">86%</div>
+                  <div id="humidity" class="number">{{ serverData.humidity }}%</div>
                   <div class="card-name">Độ ẩm</div>
               </div>
               <div class="icon-box">
@@ -26,7 +110,7 @@
           </div>
           <div class="card">
               <div class="card-content">
-                  <div id="lightvalue" class="number">800 lux</div>
+                  <div id="lightvalue" class="number">{{ serverData.lightValue }} lux</div>
                   <div class="card-name">Độ sáng</div>
               </div>
               <div class="icon-box">
@@ -35,11 +119,11 @@
           </div>
           <div class="card">
               <div class="card-content">
-                  <div id="voltage" class="number">0.12 Vol</div>
+                  <div id="voltage" class="number">{{ serverData.voltage }} Vol</div>
                   <div class="card-name">Điện áp</div>
               </div>
               <div class="icon-box">
-                  <i class="fa-solid fa-bolt"></i>
+                  <i class="fa-solid fa-bolt">{{ x }}</i>
               </div>
           </div>
       </div>
@@ -59,7 +143,7 @@
                       <div class="equipment_body">
                           <div class="switch-container" id="fan">
                               <label class="switch">
-                                  <input type="checkbox" id="toggle-switch">
+                                  <input type="checkbox" id="toggle-switch" v-model="fan">
                                   <span class="slider"></span>
                               </label>
                           </div>
@@ -71,7 +155,7 @@
                       <div  class="equipment_body">
                           <div class="switch-container" id="led">
                               <label class="switch">
-                                  <input type="checkbox" id="toggle-switch">
+                                  <input type="checkbox" id="toggle-switch" v-model="led">
                                   <span class="slider"></span>
                               </label>
                           </div>

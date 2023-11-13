@@ -20,9 +20,11 @@ const onDataReceived = (message) => {
   // Do something with the received data
 };
 
+
+
 onMounted(() => {
   console.log('Connecting to WebSocket...');
-  stompClient.connect({}, (frame) => {
+  stompClient.connect({}, async (frame) => {
     console.log('Connected to WebSocket');
     // Subscribe to a specific STOMP destination to get real-time data
     const subscription = stompClient.subscribe('/sensor', onDataReceived);
