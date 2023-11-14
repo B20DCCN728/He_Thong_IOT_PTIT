@@ -4,14 +4,8 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
+import Line from './LineChart.vue';
 
-const chartJsScript = document.createElement('script');
-chartJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js';
-document.head.appendChild(chartJsScript);
-
-const chartJsMinScript = document.createElement('script');
-chartJsMinScript.src = 'https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js';
-document.head.appendChild(chartJsMinScript);
 
 // led
 const led = ref(false);
@@ -85,12 +79,12 @@ const onDataReceived = (message) => {
 
 // Subscribe to a specific STOMP destination to get real-time data
 onMounted(() => {
-  console.log('Connecting to WebSocket...');
-  stompClient.connect({}, (frame) => {
+    console.log('Connecting to WebSocket...');
+    stompClient.connect({}, (frame) => {
     console.log('Connected to WebSocket');
-    // Subscribe to a specific STOMP destination to get real-time data
+        // Subscribe to a specific STOMP destination to get real-time data
     const subscription = stompClient.subscribe('/sensor', onDataReceived);
-    // subscription.unsubscribe();
+        // subscription.unsubscribe();
   });
 });
 </script>
@@ -140,6 +134,7 @@ onMounted(() => {
       <div class="charts">
           <div class="chart">
               <h2>Đồ thị biểu diễn trạng thái cảm biến</h2>
+              <Line />
               <div>
                   <!-- <canvas id="lineChart"></canvas> -->
                   <canvas id="lineChart" style="width:100%;max-width:800px"></canvas>
