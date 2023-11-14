@@ -4,8 +4,23 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
-import Line from './LineChart.vue';
+import Line from './chart/LineChart.vue';
 
+const temperature = ref({
+    color: '#299B63',
+});
+
+const humidity = ref({
+    color: '#299B63',
+});
+
+const lightValue = ref({
+    color: '#299B63',
+});
+
+const voltage = ref({
+    color: '#299B63',
+}); 
 
 // led
 const led = ref(false);
@@ -77,6 +92,48 @@ const onDataReceived = (message) => {
   console.log('Received data:', data);
 };
 
+// Watch server data to change color of value
+watch(serverData, (newServerData) => {
+    if(newServerData.temperature >= 30) {
+        temperature.value.color = 'rgb(255,205,116)';
+        console.log("Temperature is high!!!");
+    } else if(newServerData.temperature <= 24) {
+        temperature.value.color = '#B8E1FF';
+        console.log("Temperature is cold!!!");
+    } else {
+        lightValue.value.color = '#299B63';
+        console.log("Temperature is normal!!!");
+    }
+
+    if(newServerData.humidity >= 80) {
+        humidity.value.color = '#FF0000';
+        console.log("Humidity is high!!!");
+    } else if(newServerData.humidity <= 50) {
+        humidity.value.color = '#299B63';
+        console.log("Humidity is low!!!");
+    } else {
+        lightValue.value.color = '#299B63';
+        console.log("Humidity is normal!!!");
+    }
+
+    if(newServerData.lightValue >= 800) {
+        lightValue.value.color = '#FF0000';
+        console.log("Light value is low!!!");
+    } else if(newServerData.lightValue <= 400) {
+        lightValue.value.color = 'rgb(255,205,116)';
+        console.log("Light value is high!!!");
+    } else {
+        lightValue.value.color = '#299B63';
+        console.log("Light value is normal!!!");
+    }
+
+    // if(newServerData.voltage <= 2.0) {
+    //     voltage.value.color = '#FF0000';
+    // } else if(newServerData.voltage > 3.3) {
+    //     voltage.value.color = '#299B63';
+    // }
+});
+
 // Subscribe to a specific STOMP destination to get real-time data
 onMounted(() => {
     console.log('Connecting to WebSocket...');
@@ -96,38 +153,38 @@ onMounted(() => {
       <div class="cards">
           <div class="card">
               <div class="card-content">
-                  <div id="temperature" class="number"> {{ serverData.temperature }}°C</div>
+                  <div id="temperature" :style="temperature" class="number cold"> {{ serverData.temperature }}°C</div>
                   <div class="card-name">Nhiệt độ</div>
               </div>
               <div class="icon-box">
-                  <i class="fa-solid fa-temperature-high"></i>
+                  <i :style="temperature" class="fa-solid fa-temperature-high"></i>
               </div>
           </div>
           <div class="card">
               <div class="card-content">
-                  <div id="humidity" class="number">{{ serverData.humidity }}%</div>
+                  <div id="humidity" :style="humidity" class="number">{{ serverData.humidity }}%</div>
                   <div class="card-name">Độ ẩm</div>
               </div>
               <div class="icon-box">
-                  <i class="fa-solid fa-umbrella"></i>
+                  <i :style="humidity" class="fa-solid fa-umbrella"></i>
               </div>
           </div>
           <div class="card">
               <div class="card-content">
-                  <div id="lightvalue" class="number">{{ serverData.lightValue }} lux</div>
+                  <div id="lightvalue" :style="lightValue" class="number">{{ serverData.lightValue }} lux</div>
                   <div class="card-name">Độ sáng</div>
               </div>
               <div class="icon-box">
-                  <i class="fa-solid fa-lightbulb"></i>
+                  <i :style="lightValue" class="fa-solid fa-lightbulb"></i>
               </div>
           </div>
           <div class="card">
               <div class="card-content">
-                  <div id="voltage" class="number">{{ serverData.voltage }} Vol</div>
+                  <div id="voltage" :style="voltage" class="number">{{ serverData.voltage }} Vol</div>
                   <div class="card-name">Điện áp</div>
               </div>
               <div class="icon-box">
-                  <i class="fa-solid fa-bolt">{{ x }}</i>
+                  <i :style="voltage" class="fa-solid fa-bolt">{{ x }}</i>
               </div>
           </div>
       </div>
@@ -166,7 +223,9 @@ onMounted(() => {
                           </div>
                           
                           <i v-show="!led" class="equipment_body-sticker fa-solid fa-lightbulb"></i>
-                          <i v-show="led" style="color: rgb(224, 224, 82);" class="equipment_body-sticker fa-regular fa-lightbulb"></i>
+                          <i v-show="led" 
+                          style="color: rgb(224, 224, 82);" 
+                          class="equipment_body-sticker fa-regular fa-lightbulb"></i>
                       </div>
                   </div>
               </div> 
@@ -208,7 +267,6 @@ onMounted(() => {
 .number {
     font-size: 35px;
     font-weight: 500;
-    color: #299B63;
 }
 
 .card-name {
@@ -218,9 +276,7 @@ onMounted(() => {
 
 .icon-box i {
     font-size: 45px;
-    color: #299b63;
 }
-
 
 /* charts */
 

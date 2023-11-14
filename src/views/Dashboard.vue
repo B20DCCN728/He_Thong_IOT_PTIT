@@ -1,11 +1,9 @@
 <script>
 import Menu from '../components/Menu.vue';
-import LineChart from '../components/LineChart.vue';
-  
+  document.getElementById
   export default {
     components: {
       Menu,
-    LineChart,
     },
   };    
 </script>
@@ -13,8 +11,4 @@ import LineChart from '../components/LineChart.vue';
 
 <template>
     <Menu /> 
-    <div>
-      <LineChart />
-    </div>
-
 </template>

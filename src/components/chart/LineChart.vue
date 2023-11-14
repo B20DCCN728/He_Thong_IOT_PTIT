@@ -13,7 +13,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import { ref } from 'vue';
+
+import { ref, onMounted } from 'vue';
 import { Line } from 'vue-chartjs';
 
 ChartJS.register(
@@ -129,7 +130,10 @@ const data = ref({
 // }
 
 // // Update chart data every 3 seconds (adjust the interval as needed)
-// setInterval(updateChartData, 1000);
+
+// onMounted(() => {
+//   setInterval(updateChartData, 1000);
+// });
 
 </script> 
 
