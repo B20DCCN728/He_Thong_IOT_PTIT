@@ -1,7 +1,7 @@
 <template>
     <div class="topbar">
         <div class="logo">
-            <h2>Nguyễn Hoàng Việt</h2>
+            <h2>B20DCCN728👨‍💻👨‍🚀</h2>
         </div>
         <div class="search">
             <input type="text" name="search" placeholder="Tìm kiếm ở đây">

@@ -94,10 +94,10 @@ const onDataReceived = (message) => {
 
 // Watch server data to change color of value
 watch(serverData, (newServerData) => {
-    if(newServerData.temperature >= 30) {
+    if (newServerData.temperature >= 30) {
         temperature.value.color = 'rgb(255,205,116)';
         console.log("Temperature is high!!!");
-    } else if(newServerData.temperature <= 24) {
+    } else if (newServerData.temperature <= 24) {
         temperature.value.color = '#B8E1FF';
         console.log("Temperature is cold!!!");
     } else {
@@ -105,33 +105,38 @@ watch(serverData, (newServerData) => {
         console.log("Temperature is normal!!!");
     }
 
-    if(newServerData.humidity >= 80) {
-        humidity.value.color = '#FF0000';
+    if (newServerData.humidity >= 60) {
+        humidity.value.color = 'rgb(37,70,103)';
         console.log("Humidity is high!!!");
-    } else if(newServerData.humidity <= 50) {
-        humidity.value.color = '#299B63';
+    } else if(newServerData.humidity <= 40) {
+        humidity.value.color = 'rgb(232,182,137)';
         console.log("Humidity is low!!!");
     } else {
         lightValue.value.color = '#299B63';
         console.log("Humidity is normal!!!");
     }
 
-    if(newServerData.lightValue >= 800) {
-        lightValue.value.color = '#FF0000';
+    if (newServerData.lightValue >= 800) {
+        lightValue.value.color = 'rgb(36,36,36)';
         console.log("Light value is low!!!");
-    } else if(newServerData.lightValue <= 400) {
-        lightValue.value.color = 'rgb(255,205,116)';
+    } else if(newServerData.lightValue <= 450) {
+        lightValue.value.color = '#fbd502';
         console.log("Light value is high!!!");
     } else {
-        lightValue.value.color = '#299B63';
+        lightValue.value.color = 'rgb(255, 165, 0)';
         console.log("Light value is normal!!!");
     }
 
-    // if(newServerData.voltage <= 2.0) {
-    //     voltage.value.color = '#FF0000';
-    // } else if(newServerData.voltage > 3.3) {
-    //     voltage.value.color = '#299B63';
-    // }
+    if (newServerData.voltage <= 1.4) {
+        voltage.value.color = 'rgb(255, 99, 71)';
+        console.log("Voltage is low!!!");
+    } else if (newServerData.voltage > 2.5) {
+        voltage.value.color = 'rgb(180, 180, 180)';
+        console.log("Voltage is high!!!");
+    } else {
+        voltage.value.color = '#299B63';
+        console.log("Voltage is normal!!!");
+    }
 });
 
 // Subscribe to a specific STOMP destination to get real-time data
@@ -244,6 +249,7 @@ onMounted(() => {
     min-height: calc(100vh - 60px);
     left: 260px;
     background: #f5f5f5;
+    /* background: rgb(244, 244, 241); */
 }
 
 .cards {
@@ -260,8 +266,16 @@ onMounted(() => {
     align-items: center;
     justify-content: space-between;
     background-color: #fff;
+    cursor: pointer;
     border-radius: 10px;
-    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f3cece;
+    /* box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08); */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.cards .card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .number {
