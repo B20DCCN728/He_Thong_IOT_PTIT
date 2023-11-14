@@ -5,6 +5,14 @@ import Stomp from 'stompjs';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 
+const chartJsScript = document.createElement('script');
+chartJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js';
+document.head.appendChild(chartJsScript);
+
+const chartJsMinScript = document.createElement('script');
+chartJsMinScript.src = 'https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js';
+document.head.appendChild(chartJsMinScript);
+
 // led
 const led = ref(false);
 
@@ -15,6 +23,7 @@ const request = {
     "message": "ON"
 }
 
+// watch led
 watch(led, async (newLed) => {
     if(newLed === true) {
         request.message = "ON";
@@ -32,6 +41,7 @@ watch(led, async (newLed) => {
     } 
 });
 
+// watch fan 
 watch(fan, async (newFan) => {
     if(newFan === true) {
         request.message = "ON";
@@ -147,7 +157,7 @@ onMounted(() => {
                                   <span class="slider"></span>
                               </label>
                           </div>
-                          <i class="equipment_body-sticker fa-solid fa-fan"></i>
+                          <i :class="{ 'rotate': fan }" class="equipment_body-sticker fa-solid fa-fan"></i>
                       </div>
                   </div>
                   <div class="equipment my-led">
@@ -159,8 +169,9 @@ onMounted(() => {
                                   <span class="slider"></span>
                               </label>
                           </div>
-                          <i id="ON" class="equipment_body-sticker equipment_body-sticker--OFF fa-solid fa-lightbulb"></i>
-                          <i id="OFF" class="equipment_body-sticker equipment_body-sticker--ON fa-regular fa-lightbulb"></i>
+                          
+                          <i v-show="!led" class="equipment_body-sticker fa-solid fa-lightbulb"></i>
+                          <i v-show="led" style="color: rgb(224, 224, 82);" class="equipment_body-sticker fa-regular fa-lightbulb"></i>
                       </div>
                   </div>
               </div> 
@@ -318,9 +329,10 @@ onMounted(() => {
     height: 40%;
     width: 100%;
     margin: 10px 20px 0;
-    background-color: #e5f1d7;
+    background-color: rgb(221, 246, 243);
     border-radius: 20px;
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+    border: 2px solid rgb(109, 245, 177);
 }
 
 .chart .equipment-home {
@@ -352,19 +364,15 @@ onMounted(() => {
     font-size: 60px;
 }
 
-.equipment_body-sticker--ON {
-    display: none;
-}
-.equipment_body-sticker--OFF {
-}
 
 /* Bonus */
 .switch-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #b6e3cd;
+    background-color: rgb(105, 220, 168);
     border-radius: 12px;
+    border: 1px solid rgb(236, 140, 140);
     padding: 30px;
 }
 
@@ -419,5 +427,18 @@ input:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
+}
+
+.rotate {
+  animation: rotate 0.5s infinite linear;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
