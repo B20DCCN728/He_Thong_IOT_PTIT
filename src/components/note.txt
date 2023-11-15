@@ -1,0 +1,17 @@
+.hot {
+    color: rgb(255,205,116);
+}
+
+.icon-box i {
+    color: rgb(239, 211, 84);
+}
+
+.icon-box i .cold {
+    color: #B8E1FF; 
+}
+
+.cold {
+    color: #B8E1FF;
+}
+
+    color: #299B63;

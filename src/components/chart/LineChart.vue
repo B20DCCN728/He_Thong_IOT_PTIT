@@ -1,5 +1,7 @@
+<!-- Created by B20DCCN728 - Nguyen Hoang Viet -->
+
 <template>
-  <Line :data="data" :options="options" />
+  <Line :data="data" :options="option" :key="renderKey"/>
 </template>
 
 <script setup>
@@ -14,7 +16,7 @@ import {
   Legend
 } from 'chart.js';
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineProps, watch, reactive, toRef } from 'vue';
 import { Line } from 'vue-chartjs';
 
 ChartJS.register(
@@ -27,6 +29,13 @@ ChartJS.register(
   Legend
 );
 
+// Define the chart data values by Props 
+const props = defineProps({
+  serverData: {
+    type: Object,
+    required: true,
+  },
+});
 
 const xValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200];
 const numDataPoints = xValues.length;
@@ -34,67 +43,69 @@ const dataWindowSize = 15; // Number of data points to show in the window
 
 // Initialize the initial data values
 const initialData = {
-  temperature: [30, 35, 25, 11, 45, 17, 28, 40, 17, 2, 14, 12, 50, 34, 25],
-  humidity: [50, 30, 17, 85, 70, 75, 81, 94, 60, 70, 92, 73, 100, 73, 56, 97],
-  light: [300, 700, 2000, 1050, 100, 500, 120, 100, 300, 100, 1000, 2000, 56, 72, 456, 230]
+  temperature: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  humidity: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  lightValue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 };
 
-
+// Define the chart data
 const data = ref({
   labels: xValues.slice(-dataWindowSize), // Show only a window of data points
   datasets: [
     {
       data: initialData.temperature.slice(-dataWindowSize),
       label: 'Nhiệt độ',
-      yAxisID: 'A',
+      yAxisID: 'left',
       borderColor: "red",
       backgroundColor: 'transparent',
-      fill: false
-    },
+      fill: false,
+    },  
     {
       data: initialData.humidity.slice(-dataWindowSize),
       label: 'Độ ẩm',
-      yAxisID: 'A',
+      yAxisID: 'left',
       borderColor: "green",
       backgroundColor: 'transparent',
-      fill: false
+      fill: false,
     },
     {
-      data: initialData.light.slice(-dataWindowSize),
+      data: initialData.lightValue.slice(-dataWindowSize),
       label: 'Ánh sáng',
-      yAxisID: 'B',
+      yAxisID: 'right',
       borderColor: "blue",
       backgroundColor: 'transparent',
-      fill: false
+      fill: false,
     }
   ],
   });
   
-  const options = ref({
+  // Define the chart options 
+  const option = ref({
+    responsive: true,
+    animation: {
+      duration: 0, // Disable default animation
+    },
     scales: {
-      A: {
+      left: {
             position: 'left',
-            type: 'linear',
+            // type: 'linear',
             ticks: {
-                min: 0,
-                max: 100,
-                stepSize: 5,
-                reverse: true
+                beginAtZero: true,
+                stepSize: 10,
+                // reverse: true
             },
+            min: 0,
+            max: 100,
         },
-      B:  {
+      right:  {
             position: 'right',
             ticks: {
-                min: 0,
-                max: 2000,
+                // beginAtZero: true,
                 stepSize: 100,             
             },
+            min: 0,
+            max: 1050,
         },
-      x: [
-        {
-            type: 'category',
-        },
-    ],
   },
   legend: { 
     display: false 
@@ -106,35 +117,26 @@ const data = ref({
   },
 });
 
-// // Create a function to shift data points to the left
-// function shiftDataLeft(data) {
-//   return data.slice(1).concat(data[0]);
-// }
+const renderKey = ref(0);
 
-// const chart = new Chart(ctx, {
-//   type: "line",
-//   data: datasets,
-//   options: options,
-// });
+const updateChart = (newServerData) => {
+  console.log("newServerData", newServerData.lightValue);
+    try {
+      data.value.datasets[0].data = data.value.datasets[0].data.slice(1).concat(newServerData.temperature);
+      data.value.datasets[1].data = data.value.datasets[1].data.slice(1).concat(newServerData.humidity);
+      data.value.datasets[2].data = data.value.datasets[2].data.slice(1).concat(newServerData.lightValue);
+    } catch (error) {
+      console.log(error);
+    }
+};
 
-
-// // Function to update chart data by shifting it to the left
-// function updateChartData() {
-//   // Shift data to the left for each category
-//   chart.data.datasets[0].data = shiftDataLeft(chart.data.datasets[0].data);
-//   chart.data.datasets[1].data = shiftDataLeft(chart.data.datasets[1].data);
-//   chart.data.datasets[2].data = shiftDataLeft(chart.data.datasets[2].data);
-
-//   // Redraw the chart
-//   chart.update();
-// }
-
-// // Update chart data every 3 seconds (adjust the interval as needed)
-
-// onMounted(() => {
-//   setInterval(updateChartData, 1000);
-// });
-
+// Watch serverData change for update the chart data
+watch(() => props.serverData, (newServerData) => {
+    updateChart(newServerData);
+    renderKey.value += 1;
+  },
+  { deep: true },
+);
 </script> 
 
 

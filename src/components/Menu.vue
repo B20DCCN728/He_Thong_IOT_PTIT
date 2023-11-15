@@ -196,10 +196,11 @@ onMounted(() => {
       <div class="charts">
           <div class="chart">
               <h2>Đồ thị biểu diễn trạng thái cảm biến</h2>
-              <Line />
               <div>
+                <Line :server-data="serverData"/>
+                <!-- <Line :server-data="serverData"/> -->
                   <!-- <canvas id="lineChart"></canvas> -->
-                  <canvas id="lineChart" style="width:100%;max-width:800px"></canvas>
+                  <!-- <canvas id="lineChart" style="width:100%;max-width:800px"></canvas> -->
               </div>
           </div>
           <div class="chart">
