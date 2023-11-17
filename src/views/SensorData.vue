@@ -1,9 +1,9 @@
 <script setup>
-import SensorData from '../components/SensorDataCom.vue';
+import SensorTable from '../components/table/SensorTable.vue';
 </script>
 
 <template>
-    
+    <SensorTable />
 </template>
 
 <style scoped>

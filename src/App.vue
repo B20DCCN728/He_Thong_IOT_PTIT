@@ -9,7 +9,6 @@ import SideBar from './components/SideBar.vue';
     <Header />
   </header>
 
-
   <main>
     <div class="container">
       <SideBar style="width: 17%; float: left;" />

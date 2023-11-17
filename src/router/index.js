@@ -14,7 +14,7 @@ const routes = [
             {
                 path: "sensor-data",
                 name: "sensor-data",
-                component: () => import("../components/SensorDataCom.vue"),
+                component: () => import("../views/SensorData.vue"),
             },
             {
                 path: "profile",
@@ -24,7 +24,12 @@ const routes = [
             {
                 path: "device-status",
                 name: "device-status",
-                components: () => import("../components/DeviceStatus.vue"),
+                component: () => import("../views/DeviceStatus.vue"),
+            },
+            {
+                path: "about",
+                name: "about",
+                component: () => import("../views/About.vue"),
             }
         ],
     },

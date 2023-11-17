@@ -198,7 +198,6 @@ onMounted(() => {
               <h2>Đồ thị biểu diễn trạng thái cảm biến</h2>
               <div>
                 <Line :server-data="serverData"/>
-                <!-- <Line :server-data="serverData"/> -->
                   <!-- <canvas id="lineChart"></canvas> -->
                   <!-- <canvas id="lineChart" style="width:100%;max-width:800px"></canvas> -->
               </div>
@@ -250,9 +249,8 @@ onMounted(() => {
     min-height: calc(100vh - 60px);
     left: 260px;
     background: #f5f5f5;
-    /* background: rgb(244, 244, 241); */
 }
-
+    /* background: rgb(244, 244, 241); */
 .cards {
     width: 100%;
     padding: 35px 20px;

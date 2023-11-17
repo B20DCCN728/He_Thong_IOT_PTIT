@@ -24,7 +24,7 @@ height: 60px;
 display: grid;
 grid-template-columns: 2fr 10fr 0.4fr 1fr;
 align-items: center;
-z-index: 1;
+z-index: 2;
 }
 
 img {
