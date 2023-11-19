@@ -1,3 +1,4 @@
+<!-- Created by B20DCCN728 -->
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import SockJS from 'sockjs-client';
@@ -5,7 +6,12 @@ import Stomp from 'stompjs';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import Line from './chart/LineChart.vue';
+import Skeleton from './skeleton/Loading.vue'
 
+// Define loading value
+const loading = ref(true);
+
+// Define color
 const temperature = ref({
     color: '#299B63',
 });
@@ -140,20 +146,19 @@ watch(serverData, (newServerData) => {
 });
 
 // Subscribe to a specific STOMP destination to get real-time data
-onMounted(() => {
+onMounted(async () => {
     console.log('Connecting to WebSocket...');
     stompClient.connect({}, (frame) => {
     console.log('Connected to WebSocket');
         // Subscribe to a specific STOMP destination to get real-time data
     const subscription = stompClient.subscribe('/sensor', onDataReceived);
         // subscription.unsubscribe();
+    // loading.value = false;
   });
 });
 </script>
 
 <template>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script> -->
   <div class="main">
       <div class="cards">
           <div class="card">
@@ -236,6 +241,9 @@ onMounted(() => {
               </div> 
           </div>
       </div>
+      <!-- <Skeleton
+        :loading="loading"
+      />     -->
   </div>
 </template>
 

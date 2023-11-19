@@ -1,6 +1,7 @@
+<!-- Create by B20DCCN728 -->
 <template>
     <div class="main">
-      <div class="table-operations">
+      <div v-show="!loading" class="table-operations">
         <a-space direction="vertical">
           <a-space warp>
             <a-tooltip title="Clear Filters">
@@ -26,7 +27,16 @@
           </a-space>
         </a-space>
       </div>
-      <a-table :columns="columns" :data-source="dataSource" @change="handleChange" size="middle"/>
+      <a-table 
+        v-show="!loading" 
+        :columns="columns" 
+        :data-source="dataSource"
+        @change="handleChange" 
+        size="middle"
+      />
+      <Skeleton 
+        :loading="loading" 
+      />
     </div>
   </template>
   <script setup>
@@ -34,7 +44,11 @@
   import axios from 'axios';
   import { h } from 'vue';
   import dayjs from 'dayjs';
+  import Skeleton from '../skeleton/Loading.vue'
   import { SearchOutlined } from '@ant-design/icons-vue';
+
+  // Define skeleton
+  const loading = ref(true);
 
   // Define format
   const format = "YYYY-MM-DDTHH:mm:ss";
@@ -107,15 +121,15 @@
   };
 
   const dataSource = ref();
-
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/getAllDeviceData');
-
-            dataSource.value = response.data; 
-
-            console.log('Data fetched:', response.data); // Add this line
-
+          await new Promise(
+                resolve => setTimeout(resolve, 500)
+          );
+          const response = await axios.get('http://localhost:8080/getAllDeviceData');
+          loading.value = false;
+          dataSource.value = response.data; 
+          console.log('Data fetched:', response.data); // Add this line
         } catch (error) {
             console.error('Error fetching data:', error);
             message.error('Error fetching data');

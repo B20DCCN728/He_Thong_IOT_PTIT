@@ -20,10 +20,12 @@
         }
     );
 
-
-
     const fetchData = async () => {
         try {
+            await new Promise(
+                resolve => setTimeout(resolve, 500)
+            );
+
             const response = await axios.get('http://localhost:8080/profile');
             // dataSource.value = response.data; // Replace dataSource with the fetched data
             loading.value = false;

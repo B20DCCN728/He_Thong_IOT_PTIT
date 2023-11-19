@@ -1,6 +1,7 @@
+<!-- Created by Campus -->
 <template>
     <div class="main">
-      <div class="table-operations">
+      <div v-show="!loading" class="table-operations">
         <a-space direction="vertical">
           <a-space warp>
             <a-tooltip title="Clear Filters">
@@ -13,7 +14,6 @@
               <a-select-option value="lightValue">Ánh sáng</a-select-option>
               <a-select-option value="voltage">Điện áp</a-select-option>
             </a-select> -->
-
             <a-range-picker
               allowClear
               :value="selectedTime"
@@ -31,7 +31,16 @@
           </a-space>
         </a-space>
       </div>
-      <a-table :columns="columns" :data-source="dataSource" @change="handleChange" size="middle"/>
+      <a-table 
+        v-show="!loading" 
+        :columns="columns" 
+        :data-source="dataSource" 
+        @change="handleChange" 
+        size="middle"
+      />
+      <Skeleton 
+        :loading="loading" 
+      />
     </div>
   </template>
   <script setup>
@@ -40,9 +49,11 @@
   import { h } from 'vue';
   import dayjs from 'dayjs';
   import { SearchOutlined } from '@ant-design/icons-vue';
+  import Skeleton from '../skeleton/Loading.vue'
 
   // Define variables
   const format = "YYYY-MM-DDTHH:mm:ss";
+  const loading = ref(true);
 
   // Handle time filter
   const selectedTime = ref();
@@ -136,12 +147,13 @@
 
   const fetchData = async () => {
       try {
+          await new Promise(
+            resolve => setTimeout(resolve, 500)
+          );
           const response = await axios.get('http://localhost:8080/getAllSensorData');
-
+          loading.value = false;
           dataSource.value = response.data; 
-
           console.log('Data fetched:', response.data); // Add this line
-
       } catch (error) {
           console.error('Error fetching data:', error);
           message.error('Error fetching data');
