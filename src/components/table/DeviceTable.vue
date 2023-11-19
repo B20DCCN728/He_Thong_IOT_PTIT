@@ -17,10 +17,11 @@
               show-time
               format="YYYY/MM/DD HH:mm:ss"
               :presets="rangePresets"
+              @ok="saveTimeFilter"
               @change="onRangeChange"
             />
             <a-tooltip title="Search by Time">
-              <a-button type="primary" :icon="h(SearchOutlined)" danger>Tìm kiếm</a-button>
+              <a-button type="primary" :icon="h(SearchOutlined)" @click="searchTime" danger>Tìm kiếm</a-button>
             </a-tooltip>
           </a-space>
         </a-space>
@@ -32,9 +33,13 @@
   import { computed, ref, onMounted } from 'vue';
   import axios from 'axios';
   import { h } from 'vue';
+  import dayjs from 'dayjs';
   import { SearchOutlined } from '@ant-design/icons-vue';
 
-
+  // Define format
+  const format = "YYYY-MM-DDTHH:mm:ss";
+  // Handle time filter
+  const selectedTime = ref();
   const filteredInfo = ref();
   const sortedInfo = ref();
   const columns = computed(() => {
@@ -65,6 +70,14 @@
         title: 'Thời gian',
         dataIndex: 'timeStamp',
         key: 'timeStamp',
+        filteredValue: filtered.timeRange || null,
+        onFilter: (value, record) => {
+          let arr = value.split(" ");
+          let current = dayjs(record.timeStamp, { format });
+          return  current.isAfter(dayjs(arr[0], { format })) 
+                  && 
+                  current.isBefore(dayjs(arr[1], { format }));
+        },
         sorter: (a, b) => a.timeStamp - b.timeStamp,
         sortOrder: sorted.columnKey === 'age' && sorted.order,
       },
@@ -132,7 +145,31 @@
             message.error('Error fetching data');
         }
     };
-    
+  
+  // Handle time filter
+  const onRangeChange = (dates, dateStrings) => {
+    selectedTime.value = dates;
+    console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+  };
+
+  // Ok button
+  const saveTimeFilter = (dates) => {
+    selectedTime.value = dates;
+  };
+  
+  // Handle search time
+  const searchTime = () => {
+    console.log('Search time: ', dayjs(selectedTime.value[0]).format(format));
+    filteredInfo.value = {  
+      timeRange: 
+        [dayjs(selectedTime.value[0]).format(format) 
+        + " " +
+        dayjs(selectedTime.value[1]).format(format)]
+      ,
+    };
+  };
+
+  
   onMounted(() => {
       fetchData();
   })

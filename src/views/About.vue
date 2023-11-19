@@ -1,66 +1,15 @@
 <template>
-  <a-table :columns="columns" :data-source="data" @change="onChange" />
+  <div>
+    <div class="table-operations">
+      <a-button @click="setAgeSort">Sort age</a-button>
+      <a-button @click="clearFilters">Clear filters</a-button>
+      <a-button @click="clearAll">Clear filters and sorters</a-button>
+    </div>
+    <a-table :columns="columns" :data-source="data" @change="handleChange" />
+  </div>
 </template>
 <script setup>
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    filters: [
-      {
-        text: 'Joe',
-        value: 'Joe',
-      },
-      {
-        text: 'Jim',
-        value: 'Jim',
-      },
-      {
-        text: 'Submenu',
-        value: 'Submenu',
-        children: [
-          {
-            text: 'Green',
-            value: 'Green',
-          },
-          {
-            text: 'Black',
-            value: 'Black',
-          },
-        ],
-      },
-    ],
-    // specify the condition of filtering result
-    // here is that finding the name started with `value`
-    onFilter: (value, record) => record.name.indexOf(value) === 0,
-    sorter: (a, b) => a.name.length - b.name.length,
-    sortDirections: ['descend'],
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    defaultSortOrder: 'descend',
-    sorter: (a, b) => a.age - b.age,
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    filters: [
-      {
-        text: 'London',
-        value: 'London',
-      },
-      {
-        text: 'New York',
-        value: 'New York',
-      },
-    ],
-    filterMultiple: false,
-    onFilter: (value, record) => record.address.indexOf(value) === 0,
-    sorter: (a, b) => a.address.length - b.address.length,
-    sortDirections: ['descend', 'ascend'],
-  },
-];
+import { computed, ref } from 'vue';
 const data = [
   {
     key: '1',
@@ -87,7 +36,89 @@ const data = [
     address: 'London No. 2 Lake Park',
   },
 ];
-const onChange = (pagination, filters, sorter) => {
-  console.log('params', pagination, filters, sorter);
+  const filteredInfo = ref();
+  const sortedInfo = ref();
+  const columns = computed(() => {
+  const filtered = filteredInfo.value || {};
+  const sorted = sortedInfo.value || {};
+  return [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      // filters: [
+      //   {
+      //     text: 'Joe',
+      //     value: 'Joe',
+      //   },
+      //   {
+      //     text: 'Jim',
+      //     value: 'Jim',
+      //   },
+      // ],
+      filteredValue: [],
+      onFilter: (value, record) => { 
+        console.log(value, record);
+        return record.name.includes(value) 
+      },
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortOrder: sorted.columnKey === 'name' && sorted.order,
+      ellipsis: true,
+    },
+    {
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+      sorter: (a, b) => a.age - b.age,
+      sortOrder: sorted.columnKey === 'age' && sorted.order,
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+      filters: [
+        {
+          text: 'London',
+          value: 'London',
+        },
+        {
+          text: 'New York',
+          value: 'New York',
+        },
+      ],
+      filteredValue: filtered.address || null,
+      onFilter: (value, record) => record.address.includes(value),
+      sorter: (a, b) => a.address.length - b.address.length,
+      sortOrder: sorted.columnKey === 'address' && sorted.order,
+      ellipsis: true,
+    },
+  ];
+});
+const handleChange = (pagination, filters, sorter) => {
+  console.log('Various parameters', pagination, filters, sorter);
+  filteredInfo.value = filters;
+  sortedInfo.value = sorter;
+};
+const clearFilters = () => {
+  filteredInfo.value = null;
+};
+const clearAll = () => {
+  filteredInfo.value = null;
+  sortedInfo.value = null;
+};
+const setAgeSort = () => {
+  sortedInfo.value = {
+    order: 'descend',
+    columnKey: 'age',
+  };
 };
 </script>
+<style scoped>
+.table-operations {
+  margin-bottom: 16px;
+}
+
+.table-operations > button {
+  margin-right: 8px;
+}
+</style>
