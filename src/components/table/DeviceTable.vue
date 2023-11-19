@@ -38,10 +38,12 @@
 
   // Define format
   const format = "YYYY-MM-DDTHH:mm:ss";
+
   // Handle time filter
   const selectedTime = ref();
   const filteredInfo = ref();
   const sortedInfo = ref();
+
   const columns = computed(() => {
     const filtered = filteredInfo.value || {};
     const sorted = sortedInfo.value || {};
@@ -50,21 +52,8 @@
         title: 'Id',
         dataIndex: 'id',
         key: 'id',
-        filters: [
-          {
-            text: 'Campus',
-            value: '71',
-          },
-          {
-            text: 'B20DCCN728',
-            value: '72',
-          },
-        ],
         filteredValue: filtered.id || null,
-        onFilter: (value, record) => record.id.includes(value),
         sorter: (a, b) => a.id - b.id,
-        sortOrder: sorted.columnKey === 'id' && sorted.order,
-        // ellipsis: true,
       },
       {
         title: 'Thời gian',
@@ -78,57 +67,44 @@
                   && 
                   current.isBefore(dayjs(arr[1], { format }));
         },
-        sorter: (a, b) => a.timeStamp - b.timeStamp,
-        sortOrder: sorted.columnKey === 'age' && sorted.order,
+        customRender: (timeStamp) => {
+            return dayjs(timeStamp.value, { format }).format("HH:mm:ss ⏱️ DD/MM/YYYY"); 
+        },
       },
       {
         title: 'Thiết bị',
         dataIndex: 'deviceName',
         key: 'deviceName',
-        // filters: [
-        //   {
-        //     text: 'London',
-        //     value: 'London',
-        //   },
-        //   {
-        //     text: 'New York',
-        //     value: 'New York',
-        //   },
-        // ],
-        // filteredValue: filtered.address || null,
-        // onFilter: (value, record) => record.address.includes(value),
-        // sorter: (a, b) => a.address.length - b.address.length,
-        // sortOrder: sorted.columnKey === 'address' && sorted.order,
-        // ellipsis: true,
       },
       {
         title: 'Trạng thái',
         dataIndex: 'state',
         key: 'state',
-        // sorter: (a, b) => a.age - b.age,
-        // sortOrder: sorted.columnKey === 'age' && sorted.order,
       },
     ];
   });
+
   const handleChange = (pagination, filters, sorter) => {
     console.log('Various parameters', pagination, filters, sorter);
-    filteredInfo.value = filters;
-    sortedInfo.value = sorter;
+    // filteredInfo.value = filters;
+    // sortedInfo.value = sorter;
   };
+
   const clearFilters = () => {
     filteredInfo.value = null;  
   };
+
   const clearAll = () => {
     filteredInfo.value = null;
-    sortedInfo.value = null;
+    selectedTime.value = [];
   };
+
   const setAgeSort = () => {
     sortedInfo.value = {
       order: 'descend',
       columnKey: 'age',
     };
   };
-
 
   const dataSource = ref();
 

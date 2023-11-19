@@ -16,7 +16,7 @@
 
             <a-range-picker
               allowClear
-
+              :value="selectedTime"
               bordered
               style="width: 400px"
               show-time
@@ -47,29 +47,21 @@
   // Handle time filter
   const selectedTime = ref();
   const filteredInfo = ref();
-  const sortedInfo = ref();
+  // const sortedInfo = ref({
+  //   columnKey: 'id',
+  //   order: 'descend',
+  // });
 
   const columns = computed(() => {
     const filtered = filteredInfo.value || {};
-    const sorted = sortedInfo.value || {};
-
+    // const sorted = sortedInfo.value || {};
     return [
       {
         title: 'Id',
         dataIndex: 'id',
         key: 'id',
-        filters: [
-          {
-            text: 'Joe',
-            value: '26474',
-          },
-          {
-            text: 'Jim',
-            value: 'Jim',
-          },
-        ],
         sorter: (a, b) => a.id - b.id,
-        sortOrder: sorted.columnKey === 'id' && sorted.order,
+        // sortOrder: sorted.columnKey === 'id' && sorted.order
       },
       {
         title: 'Thời gian',
@@ -84,19 +76,16 @@
                   current.isBefore(dayjs(arr[1], { format }));
         },
         customRender: (timeStamp) => {
-            return dayjs(timeStamp.value, { format }).format("HH:mm:ss DD/MM/YYYY"); 
+            return dayjs(timeStamp.value, { format }).format("HH:mm:ss ⏱️ DD/MM/YYYY"); 
         },
-        sorter: (a, b) => a.timeStamp - b.timeStamp,
-        sortOrder: sorted.columnKey === 'timeStamp' && sorted.order,
       },
       {
         title: 'Nhiệt độ',
         dataIndex: 'temperature',
         key: 'temperature',
         sorter: (a, b) => a.temperature - b.temperature,
-        sortOrder: sorted.columnKey === 'temperature' && sorted.order,
         customRender: (temperature) => {
-            return `${ temperature.value }°C`; // Thêm "%" sau chỉ số
+            return `${ temperature.value }°C`; 
         },
       },
       {
@@ -104,9 +93,8 @@
         dataIndex: 'humidity',
         key: 'humidity',
         sorter: (a, b) => a.humidity - b.humidity,
-        sortOrder: sorted.columnKey === 'humidity' && sorted.order,
         customRender: (humidity) => {
-            return `${ humidity.value }%`; // Thêm "%" sau chỉ số
+            return `${ humidity.value }%`; 
         },
       },
       {
@@ -114,9 +102,8 @@
         dataIndex: 'lightValue',
         key: 'lightValue',
         sorter: (a, b) => a.lightValue - b.lightValue,
-        sortOrder: sorted.columnKey === 'lightValue' && sorted.order,
         customRender: (lightValue) => {
-            return `${ lightValue.value } Lux`; // Thêm "%" sau chỉ số
+            return `${ lightValue.value } Lux`;
         },
       },
       {
@@ -124,9 +111,8 @@
         dataIndex: 'voltage',
         key: 'voltage',
         sorter: (a, b) => a.voltage - b.voltage,
-        sortOrder: sorted.columnKey === 'voltage' && sorted.order,
         customRender: (voltage) => {
-            return `${ voltage.value } Vol`; // Thêm "%" sau chỉ số
+            return `${ voltage.value } Vol`;
         },
       },
     ];
@@ -134,24 +120,15 @@
 
   const handleChange = (pagination, filters, sorter) => {
     console.log('Various parameters', pagination, filters, sorter);
+    console.log(filters);
     // filteredInfo.value = filters;
-    // sortedInfo.value = sorter;
+      // sortedInfo.value = sorter;
   };
 
   const clearFilters = () => {
     filteredInfo.value = null;  
-  };
-
-  const clearAll = () => {
-    filteredInfo.value = null;
-    sortedInfo.value = null;
-  };
-
-  const setAgeSort = () => {
-    sortedInfo.value = {
-      order: 'descend',
-      columnKey: 'age',
-    };
+    selectedTime.value = [];
+    // sortedInfo.value = null;
   };
 
   // Fetch data from server
