@@ -1,5 +1,5 @@
 # He_Thong_IOT_PTIT
-# Nguyễn Hoàng Việt - B20DCCN728 
+# Nguyễn Hoàng Việt - B20DCCN728
 # PMC Wagner 
 Смерть - это не конец, это начало чего-то другого. Мы все пойдем в ад, но в аду мы наиболее мастерски.
 
